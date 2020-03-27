@@ -136,12 +136,6 @@ if __name__ == '__main__':
     # torch.save(features_val.cpu(), "features_val.pkl")
     # torch.save(label_list_val.cpu(), "labels_val.pkl")
 
-    ''' Load for using preprocessing with pretrained ResNet '''
-    print('===> load preprocessed data with ResNet ...')
-    # features = torch.load("./preprocess/CNN/preprocess_resnet/features.pkl")
-    # label_list = torch.load("./preprocess/CNN/preprocess_resnet/labels.pkl")
-    # features_val = torch.load("./preprocess/CNN/preprocess_resnet/features_val.pkl")
-    # label_list_val = torch.load("./preprocess/CNN/preprocess_resnet/labels_val.pkl")
 
     ''' Load for using preprocessing with pretrained VGG '''
     print('===> load preprocessed data with VGG ...')
@@ -174,8 +168,8 @@ if __name__ == '__main__':
                                            shuffle=False)
 
     print('===> prepare model ...')
-    model = models.CNN_classifier(args) #use for VGG
-    #model = models.CNN_clsf(args) #use for ResNet
+    model = models.CNN_classifier(args) 
+
     if torch.cuda.is_available():
         model.cuda()
 
