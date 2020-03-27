@@ -89,23 +89,6 @@ if __name__ == '__main__':
     if torch.cuda.is_available():
         res.cuda()
 
-    # vgg16 = md.vgg16_bn(pretrained=True)
-    # vgg16_ft = nn.Sequential(*(list(vgg16.features)))
-    # vgg16_cls = nn.Sequential(*list(vgg16.classifier.children())[:-1])
-    #
-    # for param in vgg16_ft.parameters():
-    #     param.requires_grad = False
-    #
-    # for param in vgg16_cls.parameters():
-    #     param.requires_grad = False
-    #
-    # vgg16_ft.eval()
-    # vgg16_cls.eval()
-    #
-    # if torch.cuda.is_available():
-    #     vgg16_ft.cuda()
-    #     vgg16_cls.cuda()
-
     # print('===> calculate for training data ...')
     # ''' Calculate feature maps and perform avg pooling for training data '''
     # for idx, (imgs, label, length) in enumerate(train_loader):
