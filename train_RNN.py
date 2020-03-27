@@ -4,7 +4,7 @@ import torch
 import parser
 import models
 import data_c
-import test_p2
+import test_RNN
 
 import numpy as np
 import torch.nn as nn
@@ -89,57 +89,59 @@ if __name__ == '__main__':
     if torch.cuda.is_available():
         res.cuda()
 
-    # print('===> calculate for training data ...')
-    # ''' Calculate feature maps and perform avg pooling for training data '''
-    # for idx, (imgs, label, length) in enumerate(train_loader):
-    #     print(idx)
-    #
-    #     ''' move data to gpu '''
-    #     if torch.cuda.is_available():
-    #         imgs = imgs.cuda()
-    #     imgs = imgs.squeeze(0)
-    #
-    #     x = vgg16_ft(imgs).contiguous().view(imgs.size(0), -1)
-    #     out = vgg16_cls(x)
-    #
-    #     if idx == 0:
-    #         features = out
-    #         label_list = label
-    #         length_list = length
-    #     else:
-    #         features = torch.cat((features, out), dim=0)
-    #         label_list = torch.cat((label_list, label))
-    #         length_list = torch.cat((length_list, length))
+    print('===> calculate for training data ...')
+    ''' Calculate feature maps and perform avg pooling for training data '''
+    for idx, (imgs, label, length) in enumerate(train_loader):
+        print(idx)
+
+        ''' move data to gpu '''
+        if torch.cuda.is_available():
+            imgs = imgs.cuda()
+        imgs = imgs.squeeze(0)
+
+        # x = vgg16_ft(imgs).contiguous().view(imgs.size(0), -1)
+        # out = vgg16_cls(x)
+
+        out = res(imgs).contiguous().view(imgs.size(0), -1)
+
+        if idx == 0:
+            features = out
+            label_list = label
+            length_list = length
+        else:
+            features = torch.cat((features, out), dim=0)
+            label_list = torch.cat((label_list, label))
+            length_list = torch.cat((length_list, length))
 
     # os.makedirs("./preprocess_vgg/p1/val", exist_ok=True)
     # torch.save(features.cpu(), "features.pkl")
     # torch.save(label_list.cpu(), "labels.pkl")
     # torch.save(length_list.cpu(), "length.pkl")
 
-    # print('===> calculate for validation data ...')
-    # ''' Calculate feature maps and perform avg pooling for validation data '''
-    # for idx, (imgs, label, length) in enumerate(val_loader):
-    #     print(idx)
-    #
-    #     ''' move data to gpu '''
-    #     if torch.cuda.is_available():
-    #         imgs = imgs.cuda()
-    #     imgs = imgs.squeeze(0)
-    #
-    #     #x = vgg16_ft(imgs).contiguous().view(imgs.size(0), -1)
-    #     #out = vgg16_cls(x)
-    #
-    #     out = res(imgs).contiguous().view(imgs.size(0), -1)
-    #
-    #     if idx == 0:
-    #         features_val = out
-    #         label_list_val = label
-    #         length_list_val = length
-    #     else:
-    #         features_val = torch.cat((features_val, out), dim=0)
-    #         label_list_val = torch.cat((label_list_val, label))
-    #         length_list_val = torch.cat((length_list_val, length))
-    #
+    print('===> calculate for validation data ...')
+    ''' Calculate feature maps and perform avg pooling for validation data '''
+    for idx, (imgs, label, length) in enumerate(val_loader):
+        print(idx)
+
+        ''' move data to gpu '''
+        if torch.cuda.is_available():
+            imgs = imgs.cuda()
+        imgs = imgs.squeeze(0)
+
+        #x = vgg16_ft(imgs).contiguous().view(imgs.size(0), -1)
+        #out = vgg16_cls(x)
+
+        out = res(imgs).contiguous().view(imgs.size(0), -1)
+
+        if idx == 0:
+            features_val = out
+            label_list_val = label
+            length_list_val = length
+        else:
+            features_val = torch.cat((features_val, out), dim=0)
+            label_list_val = torch.cat((label_list_val, label))
+            length_list_val = torch.cat((length_list_val, length))
+
     # os.makedirs("./preprocess_vgg/p1/val", exist_ok=True)
     # torch.save(features_val.cpu(), "features_val_res.pkl")
     # torch.save(label_list_val.cpu(), "labels_val_res.pkl")
@@ -153,12 +155,12 @@ if __name__ == '__main__':
     # label_list_val = torch.load("./preprocess_p2/labels_val.pkl")
     # length_list_val = torch.load("./preprocess_p2/length_val.pkl")
 
-    features = torch.load("./preprocess_p2_res/features_res.pkl")
-    label_list = torch.load("./preprocess_p2_res/labels_res.pkl")
-    length_list = torch.load("./preprocess_p2_res/length_res.pkl")
-    features_val = torch.load("./preprocess_p2_res/features_val_res.pkl")
-    label_list_val = torch.load("./preprocess_p2_res/labels_val_res.pkl")
-    length_list_val = torch.load("./preprocess_p2_res/length_val_res.pkl")
+    # features = torch.load("./preprocess_p2_res/features_res.pkl")
+    # label_list = torch.load("./preprocess_p2_res/labels_res.pkl")
+    # length_list = torch.load("./preprocess_p2_res/length_res.pkl")
+    # features_val = torch.load("./preprocess_p2_res/features_val_res.pkl")
+    # label_list_val = torch.load("./preprocess_p2_res/labels_val_res.pkl")
+    # length_list_val = torch.load("./preprocess_p2_res/length_val_res.pkl")
 
     #print(len(features))
 
@@ -240,7 +242,7 @@ if __name__ == '__main__':
 
         if epoch % args.val_epoch == 0:
             ''' evaluate the model '''
-            acc = test_p2.evaluate(model, val_load)
+            acc = test_RNN.evaluate(model, val_load)
             writer.add_scalar('val_acc', acc, iters)
             print('Epoch: [{}] ACC:{}'.format(epoch, acc))
 
