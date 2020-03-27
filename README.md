@@ -23,12 +23,18 @@ The project is done with python3.6. For used packages, please refer to the requi
     pip3 install -r requirements.txt
     
 ### Training
-The models can be trained using the following command. To distinguish the training of GAN and ACGAN, the two following commands can be used.
+To implement CNN based video features, the data was preprocessed by first forwarding the video frames through the pretrained VGG and then by averaging the feature maps of each video. The preprocessed data is saved and loaded for training the added layers by the following command.
 
     python3 train_CNN.py
+    
+Add how to train RNN
+    
     python3 train_RNN.py
-    python3 train_s2s.py
+    
+Add how to train s2s
 
+    python3 train_s2s.py
+    
 ### Testing
 To test the trained models, the provided script can be run by using the following command. By running the scripts, the predicted labels are saved to a predefined folder.
 
