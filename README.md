@@ -4,7 +4,7 @@ Implementation of analyzing video data. First, CNN-based and RNN-based video fea
 ### Results
 In order to extract CNN-based video features, VGG16 was used with pretrained weights. To adapt the network to the given task, the last fully connected layer of the pretrained model was removed and replaced by new fully connected layers. 
 
-The results of CNN-based (Accuracy: 0.4564) and RNN-based video feature (Accuracy: 0.4564) (Trimmed action recognition) are visualized using tSNE. 
+The results of CNN-based (Accuracy: 0.4122) and RNN-based video feature (Accuracy: 0.4564) (Trimmed action recognition) are visualized using tSNE. 
 
 In order to realize temporal action segmentation, the RNN-based video feature model was extended. The results are visualized in the following.
 
