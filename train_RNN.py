@@ -62,107 +62,109 @@ if __name__ == '__main__':
     torch.manual_seed(args.random_seed)
     torch.cuda.manual_seed(args.random_seed)
 
-    ''' load dataset and prepare data loader '''
-    train_data = data_c.TrimmedVid2(args, mode="train")
-    val_data = data_c.TrimmedVid2(args, mode="val")
+    ''' Preprocessing to calculate features '''
+    # ''' load dataset and prepare data loader '''
+    # train_data = data_c.TrimmedVid2(args, mode="train")
+    # val_data = data_c.TrimmedVid2(args, mode="val")
+    #
+    # print('===> prepare dataloader ...')
+    # train_loader = torch.utils.data.DataLoader(train_data,
+    #                                            batch_size=1,
+    #                                            num_workers=args.workers,
+    #                                            shuffle=False)
+    # val_loader = torch.utils.data.DataLoader(val_data,
+    #                                          batch_size=1,
+    #                                          num_workers=args.workers,
+    #                                          shuffle=False)
+    #
+    # ''' load model '''
+    # print('===> prepare pretrained model ...')
+    # res = md.resnet50(pretrained=True)
+    # res = nn.Sequential(*list(res.children())[:-1])
+    #
+    # for param in res.parameters():
+    #     param.requires_grad = False
+    #
+    # res.eval()
+    #
+    # if torch.cuda.is_available():
+    #     res.cuda()
+    #
+    # print('===> calculate for training data ...')
+    # ''' Calculate feature maps and perform avg pooling for training data '''
+    # for idx, (imgs, label, length) in enumerate(train_loader):
+    #     print(idx)
+    #
+    #     ''' move data to gpu '''
+    #     if torch.cuda.is_available():
+    #         imgs = imgs.cuda()
+    #     imgs = imgs.squeeze(0)
+    #
+    #     # x = vgg16_ft(imgs).contiguous().view(imgs.size(0), -1)
+    #     # out = vgg16_cls(x)
+    #
+    #     out = res(imgs).contiguous().view(imgs.size(0), -1)
+    #
+    #     if idx == 0:
+    #         features = out
+    #         label_list = label
+    #         length_list = length
+    #     else:
+    #         features = torch.cat((features, out), dim=0)
+    #         label_list = torch.cat((label_list, label))
+    #         length_list = torch.cat((length_list, length))
+    #
+    # # os.makedirs("./preprocess_vgg/p1/val", exist_ok=True)
+    # # torch.save(features.cpu(), "features.pkl")
+    # # torch.save(label_list.cpu(), "labels.pkl")
+    # # torch.save(length_list.cpu(), "length.pkl")
+    #
+    # print('===> calculate for validation data ...')
+    # ''' Calculate feature maps and perform avg pooling for validation data '''
+    # for idx, (imgs, label, length) in enumerate(val_loader):
+    #     print(idx)
+    #
+    #     ''' move data to gpu '''
+    #     if torch.cuda.is_available():
+    #         imgs = imgs.cuda()
+    #     imgs = imgs.squeeze(0)
+    #
+    #     #x = vgg16_ft(imgs).contiguous().view(imgs.size(0), -1)
+    #     #out = vgg16_cls(x)
+    #
+    #     out = res(imgs).contiguous().view(imgs.size(0), -1)
+    #
+    #     if idx == 0:
+    #         features_val = out
+    #         label_list_val = label
+    #         length_list_val = length
+    #     else:
+    #         features_val = torch.cat((features_val, out), dim=0)
+    #         label_list_val = torch.cat((label_list_val, label))
+    #         length_list_val = torch.cat((length_list_val, length))
+    #
+    # # os.makedirs("./preprocess_vgg/p1/val", exist_ok=True)
+    # # torch.save(features_val.cpu(), "features_val_res.pkl")
+    # # torch.save(label_list_val.cpu(), "labels_val_res.pkl")
+    # # torch.save(length_list_val.cpu(), "length_val_res.pkl")
 
-    print('===> prepare dataloader ...')
-    train_loader = torch.utils.data.DataLoader(train_data,
-                                               batch_size=1,
-                                               num_workers=args.workers,
-                                               shuffle=False)
-    val_loader = torch.utils.data.DataLoader(val_data,
-                                             batch_size=1,
-                                             num_workers=args.workers,
-                                             shuffle=False)
+    print('===> prepare dataloader for preprocessed features ...')
+    features = torch.load("./preprocess/RNN/features_res.pkl")
+    label_list = torch.load("./preprocess/RNN/labels_res.pkl")
+    length_list = torch.load("./preprocess/RNN/length_res.pkl")
+    features_val = torch.load("./preprocess/RNN/features_val_res.pkl")
+    label_list_val = torch.load("./preprocess/RNN/labels_val_res.pkl")
+    length_list_val = torch.load("./preprocess/RNN/length_val_res.pkl")
 
-    ''' load model '''
-    print('===> prepare pretrained model ...')
-    res = md.resnet50(pretrained=True)
-    res = nn.Sequential(*list(res.children())[:-1])
-
-    for param in res.parameters():
-        param.requires_grad = False
-
-    res.eval()
-
-    if torch.cuda.is_available():
-        res.cuda()
-
-    print('===> calculate for training data ...')
-    ''' Calculate feature maps and perform avg pooling for training data '''
-    for idx, (imgs, label, length) in enumerate(train_loader):
-        print(idx)
-
-        ''' move data to gpu '''
-        if torch.cuda.is_available():
-            imgs = imgs.cuda()
-        imgs = imgs.squeeze(0)
-
-        # x = vgg16_ft(imgs).contiguous().view(imgs.size(0), -1)
-        # out = vgg16_cls(x)
-
-        out = res(imgs).contiguous().view(imgs.size(0), -1)
-
-        if idx == 0:
-            features = out
-            label_list = label
-            length_list = length
-        else:
-            features = torch.cat((features, out), dim=0)
-            label_list = torch.cat((label_list, label))
-            length_list = torch.cat((length_list, length))
-
-    # os.makedirs("./preprocess_vgg/p1/val", exist_ok=True)
-    # torch.save(features.cpu(), "features.pkl")
-    # torch.save(label_list.cpu(), "labels.pkl")
-    # torch.save(length_list.cpu(), "length.pkl")
-
-    print('===> calculate for validation data ...')
-    ''' Calculate feature maps and perform avg pooling for validation data '''
-    for idx, (imgs, label, length) in enumerate(val_loader):
-        print(idx)
-
-        ''' move data to gpu '''
-        if torch.cuda.is_available():
-            imgs = imgs.cuda()
-        imgs = imgs.squeeze(0)
-
-        #x = vgg16_ft(imgs).contiguous().view(imgs.size(0), -1)
-        #out = vgg16_cls(x)
-
-        out = res(imgs).contiguous().view(imgs.size(0), -1)
-
-        if idx == 0:
-            features_val = out
-            label_list_val = label
-            length_list_val = length
-        else:
-            features_val = torch.cat((features_val, out), dim=0)
-            label_list_val = torch.cat((label_list_val, label))
-            length_list_val = torch.cat((length_list_val, length))
-
-    # os.makedirs("./preprocess_vgg/p1/val", exist_ok=True)
-    # torch.save(features_val.cpu(), "features_val_res.pkl")
-    # torch.save(label_list_val.cpu(), "labels_val_res.pkl")
-    # torch.save(length_list_val.cpu(), "length_val_res.pkl")
-
-    print('===> prepare dataloader ...')
-    # features = torch.load("./preprocess_p2/features.pkl")
-    # label_list = torch.load("./preprocess_p2/labels.pkl")
-    # length_list = torch.load("./preprocess_p2/length.pkl")
-    # features_val = torch.load("./preprocess_p2/features_val.pkl")
-    # label_list_val = torch.load("./preprocess_p2/labels_val.pkl")
-    # length_list_val = torch.load("./preprocess_p2/length_val.pkl")
-
-    # features = torch.load("./preprocess_p2_res/features_res.pkl")
-    # label_list = torch.load("./preprocess_p2_res/labels_res.pkl")
-    # length_list = torch.load("./preprocess_p2_res/length_res.pkl")
-    # features_val = torch.load("./preprocess_p2_res/features_val_res.pkl")
-    # label_list_val = torch.load("./preprocess_p2_res/labels_val_res.pkl")
-    # length_list_val = torch.load("./preprocess_p2_res/length_val_res.pkl")
-
-    #print(len(features))
+    ''' Print shapes '''
+    # print('Shapes of training data')
+    # print(features.size())
+    # print(label_list.size())
+    # print(length_list.size())
+    # print('Shapes of val data')
+    # print(features_val.size())
+    # print(label_list_val.size())
+    # print(length_list_val.size())
 
     training_data = data_c.Features2(features, label_list, length_list)
     validation_data = data_c.Features2(features_val,label_list_val,length_list_val)
@@ -181,20 +183,16 @@ if __name__ == '__main__':
 
     ''' load model '''
     print('===> prepare pretrained model ...')
-    #model = models.RNN(input_size=4096, hidden_size=1024)
-    #model_fc = models.RNN_FC(args, hidden_dim=1)
     model = models.RNN(input_size=2048, hidden_size=1024)
 
     if torch.cuda.is_available():
         model.cuda()
-        #model_fc.cuda()
 
     ''' define loss '''
     criterion = nn.CrossEntropyLoss()
 
     ''' setup optimizer '''
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
-    #optimizer_fc = torch.optim.Adam(model_fc.parameters(), lr=args.lr, weight_decay=args.weight_decay)
 
     ''' setup tensorboard '''
     writer = SummaryWriter(os.path.join(args.save_dir, 'train_info'))
@@ -206,7 +204,6 @@ if __name__ == '__main__':
 
     for epoch in range(1, args.epoch + 1):
         model.train()
-        #model_fc.train()
         train_loss = 0.0
         train_acc = 0.0
 
