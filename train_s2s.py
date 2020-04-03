@@ -150,15 +150,14 @@ if __name__ == '__main__':
     # torch.save(vid_labels, "labels_val.pkl")
     # torch.save(vid_lengths, "length_val.pkl")
 
-    vid_feat = torch.load("./preprocess_p3/features_train_p3.pkl")
-    vid_labels = torch.load("./preprocess_p3/labels_train.pkl")
-    vid_lengths = torch.load("./preprocess_p3/length_train.pkl")
-    vid_feat_val = torch.load("./preprocess_p3/features_val_p3.pkl")
-    vid_labels_val = torch.load("./preprocess_p3/labels_val.pkl")
-    vid_lengths_val = torch.load("./preprocess_p3/length_val.pkl")
+    vid_feat = torch.load("./preprocess/S2S/features_train_p3.pkl")
+    vid_labels = torch.load("./preprocess/S2S/labels_train.pkl")
+    vid_lengths = torch.load("./preprocess/S2S/length_train.pkl")
+    vid_feat_val = torch.load("./preprocess/S2S/features_val_p3.pkl")
+    vid_labels_val = torch.load("./preprocess/S2S/labels_val.pkl")
+    vid_lengths_val = torch.load("./preprocess/S2S/length_val.pkl")
 
     training_data = data_c.Features3(vid_feat, vid_labels, vid_lengths)
-    #validation_data = data_c.Features3(vid_feat, vid_labels, vid_lengths)
     validation_data = data_c.Features3(vid_feat_val, vid_labels_val, vid_lengths_val)
 
     train_load = torch.utils.data.DataLoader(training_data,
@@ -177,10 +176,6 @@ if __name__ == '__main__':
     print('===> prepare model ...')
 
     model = models.RNN_seq(input_size=2048, hidden_size=1024)
-    #checkpoint = torch.load(args.resume2)
-    checkpoint = torch.load('RNN_model_best.pth.tar',  map_location='cpu')
-    #checkpoint = torch.load('RNN_model_best.pth_46.tar?dl=1')
-    model.load_state_dict(checkpoint)
 
     if torch.cuda.is_available():
         model.cuda()
@@ -210,13 +205,9 @@ if __name__ == '__main__':
 
         for idx, data in enumerate(train_load):
             train_info = 'Video Number: [{0}]'.format(idx+1)
-            #print(train_info)
             iters += 1
             ''' prepare data '''
             imgs, label, length = data
-
-            #print(label.size())
-            #print(imgs.size())
 
             for idx, data in enumerate(imgs):
                 train_info = 'Video: [{0}][{1}/{2}]'.format(iters, idx + 1, len(imgs))
