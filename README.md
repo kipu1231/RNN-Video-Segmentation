@@ -16,7 +16,7 @@ In order to download the used dataset and the preprocessing information, two she
     bash ./get_dataset.sh
     bash get_preprocess_data.sh
     
-The first shell script will automatically download the dataset and store the data in a folder called `face` and the second one will save the pkl files in the respective preprocessing folders.
+The first shell script will automatically download the dataset and store the data in a folder called `vid_data` and the second one will save the pkl files in the respective preprocessing folders.
 
 ### Packages
 The project is done with python3.6. For used packages, please refer to the requirments.txt for more details. All packages can be installed with the following command.
