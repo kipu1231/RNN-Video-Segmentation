@@ -4,7 +4,7 @@ import torch
 import parser
 import models
 import data_c
-import test_p3
+import test_s2s
 
 import numpy as np
 import torch.nn as nn
@@ -218,31 +218,31 @@ if __name__ == '__main__':
             #print(label.size())
             #print(imgs.size())
 
-            # for idx, data in enumerate(imgs):
-            #     train_info = 'Video: [{0}][{1}/{2}]'.format(iters, idx + 1, len(imgs))
-            #
-            #     data = data.unsqueeze(0)
-            #
-            #     if torch.cuda.is_available():
-            #         data = data.cuda()
-            #         label = label.cuda()
-            #
-            #     optimizer.zero_grad()
-            #     out = model(data)
-            #
-            #     loss = criterion(out, label[idx])
-            #     loss.backward()
-            #     optimizer.step()
-            #
-            #     '''' write out information to tensorboard '''
-            #     writer.add_scalar('loss', loss.data.cpu().numpy(), iters)
-            #     train_info += ' loss: {:.4f}'.format(loss.data.cpu().numpy())
-            #
-            #     print(train_info)
+            for idx, data in enumerate(imgs):
+                train_info = 'Video: [{0}][{1}/{2}]'.format(iters, idx + 1, len(imgs))
+
+                data = data.unsqueeze(0)
+
+                if torch.cuda.is_available():
+                    data = data.cuda()
+                    label = label.cuda()
+
+                optimizer.zero_grad()
+                out = model(data)
+
+                loss = criterion(out, label[idx])
+                loss.backward()
+                optimizer.step()
+
+                '''' write out information to tensorboard '''
+                writer.add_scalar('loss', loss.data.cpu().numpy(), iters)
+                train_info += ' loss: {:.4f}'.format(loss.data.cpu().numpy())
+
+                print(train_info)
 
         if epoch % args.val_epoch == 0:
             ''' evaluate the model '''
-            acc = test_p3.evaluate(model, val_load)
+            acc = test_s2s.evaluate(model, val_load)
             writer.add_scalar('val_acc', acc, iters)
             print('Epoch: [{}] ACC:{}'.format(epoch, acc))
 
