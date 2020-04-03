@@ -11,11 +11,12 @@ In order to realize temporal action segmentation, the RNN-based video feature mo
 # Usage
 
 ### Dataset
-In order to download the used dataset, a shell script is provided and can be used by the following command.
+In order to download the used dataset and the preprocessing information, two shell script are provided and can be used by the following commands.
 
     bash ./get_dataset.sh
+    bash get_preprocess_data.sh
     
-The shell script will automatically download the dataset and store the data in a folder called `face`. 
+The first shell script will automatically download the dataset and store the data in a folder called `face` and the second one will save the pkl files in the respective preprocessing folders.
 
 ### Packages
 The project is done with python3.6. For used packages, please refer to the requirments.txt for more details. All packages can be installed with the following command.
@@ -27,7 +28,7 @@ To implement CNN based video features, the data was preprocessed by first forwar
 
     python3 train_CNN.py
     
-Add how to train RNN
+Respectively, the RNN can be trained by the following command using features preprocessed by ResNet.
     
     python3 train_RNN.py
     
